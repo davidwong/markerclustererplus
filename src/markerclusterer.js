@@ -1,6 +1,22 @@
 /**
  * @name MarkerClustererPlus for Google Maps V3
- * @version 2.1.2 [May 28, 2014]
+ * @author David Wong
+ * @fileoverview
+ * This is a modified version of MarkerClustererPlus project
+ * <a href="https://github.com/mahnunchik/markerclustererplus">MarkerClustererPlus</a> by Gary Little.
+ *
+ * Changes:
+ *
+ * Added property minClusterZoom to MarkerClustererOptions. This is a number that, when set, will stop
+ * a MarkerClustererIcon from further zooming when clicked if the number of markers in the cluster is
+ * less or equal to it.
+ * e.g. If the minClusterZoom is set to 2, then when the MarkerClustererIcon is clicked, it will only
+ * zoom further if it contains more than 2 markers in it's cluster.
+ */
+
+ /**
+ * @name MarkerClustererPlus for Google Maps V3
+ * @version 2.1.1 [November 4, 2013]
  * @author Gary Little
  * @fileoverview
  * The library creates and manages per-zoom-level clusters for large amounts of markers.
@@ -34,7 +50,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 /**
  * @name ClusterIconStyle
@@ -150,9 +165,34 @@ ClusterIcon.prototype.onAdd = function () {
       google.maps.event.trigger(mc, "click", cClusterIcon.cluster_);
       google.maps.event.trigger(mc, "clusterclick", cClusterIcon.cluster_); // deprecated name
 
+      var allowZoom = true;
+
+      // check if the cluster has reached the minimum number so that it doesn't zoom any further
+
+      if (mc.minClusterZoom_ > 0) {
+        var numMarkers = cClusterIcon.cluster_.markers_.length;
+        if (numMarkers <= mc.minClusterZoom_)
+        {
+          allowZoom = false;
+        }
+      }
+
+/*
+      MarkerClusterer.prototype.allowZoom = function () {
+        if (this.minClusterZoom_ > 0) {
+          var numMarkers = this.markers_.length;
+          if (numMarkers <= this.minClusterZoom_) {
+            return false;
+          }
+        }
+        return true;
+      };
+      */
+     // var allowZoom = mc.allowZoom();
+
       // The default click handler follows. Disable it by setting
       // the zoomOnClick property to false.
-      if (mc.getZoomOnClick()) {
+      if (mc.getZoomOnClick() && allowZoom) {
         // Zoom into the cluster.
         mz = mc.getMaxZoom();
         theBounds = cClusterIcon.cluster_.getBounds();
@@ -653,6 +693,12 @@ Cluster.prototype.isMarkerAlreadyAdded_ = function (marker) {
  *  (The images are assumed to be square.)
  */
 /**
+ * Additional MarkerClusterOptions properties for Teepee
+ * @property {number} [minClusterZoom=0] The minimum number of markers needed in a cluster
+ *  that will prevent further zooming when the MarkerClusterIcon is clicked. This is to allow
+ *  alternative actions, e.g. infowindow
+ */
+/**
  * Creates a MarkerClusterer object with the options specified in {@link MarkerClustererOptions}.
  * @constructor
  * @extends google.maps.OverlayView
@@ -705,6 +751,8 @@ function MarkerClusterer(map, opt_markers, opt_options) {
   this.batchSize_ = opt_options.batchSize || MarkerClusterer.BATCH_SIZE;
   this.batchSizeIE_ = opt_options.batchSizeIE || MarkerClusterer.BATCH_SIZE_IE;
   this.clusterClass_ = opt_options.clusterClass || "cluster";
+
+  this.minClusterZoom_ = opt_options.minClusterZoom || 0;
 
   if (navigator.userAgent.toLowerCase().indexOf("msie") !== -1) {
     // Try to avoid IE timeout when processing a huge number of markers:
@@ -1555,7 +1603,6 @@ MarkerClusterer.prototype.extend = function (obj1, obj2) {
     return this;
   }).apply(obj1, [obj2]);
 };
-
 
 /**
  * The default function for determining the label text and style
