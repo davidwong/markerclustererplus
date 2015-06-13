@@ -1,0 +1,22 @@
+{
+  "name": "markerclustererplus",
+  "version": "2.1.2",
+  "keywords": [
+    "markerclustererplus",
+    "google",
+    "maps"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:davidwong/markerclustererplus.git"
+  },
+  "main": "src/markerclusterer.js",
+  "scripts": {
+	"build": "uglifyjs src/markerclusterer.js --compress --output src/markerclusterer_packed.js"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "uglify-js": "^2.4.23"
+  }
+}
