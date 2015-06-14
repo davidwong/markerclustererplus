@@ -2,8 +2,8 @@
  * @name MarkerClustererPlus for Google Maps V3
  * @author David Wong
  * @fileoverview
- * This is a modified version of MarkerClustererPlus project
- * <a href="https://github.com/mahnunchik/markerclustererplus">MarkerClustererPlus</a> by Gary Little.
+ * This is a modified version of google-maps-utility-library-v3 MarkerClustererPlus project
+ * <a href="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclustererplus/">MarkerClustererPlus</a>.
  *
  * Changes:
  *
@@ -16,7 +16,7 @@
 
  /**
  * @name MarkerClustererPlus for Google Maps V3
- * @version 2.1.1 [November 4, 2013]
+ * @version 2.1.2 [May 28, 2014]
  * @author Gary Little
  * @fileoverview
  * The library creates and manages per-zoom-level clusters for large amounts of markers.
@@ -693,7 +693,7 @@ Cluster.prototype.isMarkerAlreadyAdded_ = function (marker) {
  *  (The images are assumed to be square.)
  */
 /**
- * Additional MarkerClusterOptions properties for Teepee
+ * Additional MarkerClusterOptions properties
  * @property {number} [minClusterZoom=0] The minimum number of markers needed in a cluster
  *  that will prevent further zooming when the MarkerClusterIcon is clicked. This is to allow
  *  alternative actions, e.g. infowindow
@@ -1658,7 +1658,7 @@ MarkerClusterer.BATCH_SIZE_IE = 500;
  * @type {string}
  * @constant
  */
-MarkerClusterer.IMAGE_PATH = "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclustererplus/images/m";
+MarkerClusterer.IMAGE_PATH = "https://cdn.rawgit.com/davidwong/markerclustererplus/master/images/m";
 
 
 /**
