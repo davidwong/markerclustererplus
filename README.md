@@ -9,6 +9,7 @@ This is git port of the markerclustererplus library from [google-maps-utility-li
 ### Build
 
 To build a minified version of the library using uglify:
+(requires node.js)
 
 ```bash
 $ npm install
