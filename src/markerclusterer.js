@@ -7,11 +7,14 @@
  *
  * Changes:
  *
- * Added property minClusterZoom to MarkerClustererOptions. This is a number that, when set, will stop
+ * - Added property minClusterZoom to MarkerClustererOptions. This is a number that, when set, will stop
  * a MarkerClustererIcon from further zooming when clicked if the number of markers in the cluster is
  * less or equal to it.
  * e.g. If the minClusterZoom is set to 2, then when the MarkerClustererIcon is clicked, it will only
  * zoom further if it contains more than 2 markers in it's cluster.
+ *
+ * - Added property divClassName to MarkerClustererOptions. This is an optional class name for the div for aLinkcolor
+ * MarkerClustererIcon. It's use is as a tag for e2e testing (i.e. use selenium to find the clusterer in a map).
  */
 
  /**
@@ -119,6 +122,7 @@ function ClusterIcon(cluster, styles) {
   this.div_ = null;
   this.sums_ = null;
   this.visible_ = false;
+  this.divClassName = cluster.getMarkerClusterer().divClassName;
 
   this.setMap(cluster.getMap()); // Note: this causes onAdd to be called
 }
@@ -294,7 +298,14 @@ ClusterIcon.prototype.show = function () {
           ((-1 * spriteV) + this.height_) + "px, " + (-1 * spriteH) + "px);";
     }
     img += "'>";
-    this.div_.innerHTML = img + "<div style='" +
+	
+	// optional class name for the div
+	var divClass = "";
+	if (this.divClassName !== "")
+	{
+		divClass = "class='" + this.divClassName + "' ";
+	}
+    this.div_.innerHTML = img + "<div " + divClass + "style='" +
         "position: absolute;" +
         "top: " + this.anchorText_[0] + "px;" +
         "left: " + this.anchorText_[1] + "px;" +
@@ -697,6 +708,10 @@ Cluster.prototype.isMarkerAlreadyAdded_ = function (marker) {
  * @property {number} [minClusterZoom=0] The minimum number of markers needed in a cluster
  *  that will prevent further zooming when the MarkerClusterIcon is clicked. This is to allow
  *  alternative actions, e.g. infowindow
+ * @property {string} [divClassName=""] The value of the name of the class to assign to the div
+ *  for the cluster icon. This is purely a marker to allow us to find the markerclusterer div's on
+ *  the map and need not be used for styling. It is optional, so if left out the div will have no
+ *  class assigned to it.
  */
 /**
  * Creates a MarkerClusterer object with the options specified in {@link MarkerClustererOptions}.
@@ -753,6 +768,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
   this.clusterClass_ = opt_options.clusterClass || "cluster";
 
   this.minClusterZoom_ = opt_options.minClusterZoom || 0;
+  this.divClassName = opt_options.divClassName || "";
 
   if (navigator.userAgent.toLowerCase().indexOf("msie") !== -1) {
     // Try to avoid IE timeout when processing a huge number of markers:
