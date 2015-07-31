@@ -15,6 +15,9 @@
  *
  * - Added property divClassName to MarkerClustererOptions. This is an optional class name for the div for aLinkcolor
  * MarkerClustererIcon. It's use is as a tag for e2e testing (i.e. use selenium to find the clusterer in a map).
+ *
+ * - Added workaround for when the cluster does not zoom when it is clicked. This is after the call to fitBounds() and the
+ * cluster is centered but not zoomed. It is related to issue 252.
  */
 
  /**
@@ -181,33 +184,48 @@ ClusterIcon.prototype.onAdd = function () {
         }
       }
 
-/*
-      MarkerClusterer.prototype.allowZoom = function () {
-        if (this.minClusterZoom_ > 0) {
-          var numMarkers = this.markers_.length;
-          if (numMarkers <= this.minClusterZoom_) {
-            return false;
-          }
-        }
-        return true;
-      };
-      */
-     // var allowZoom = mc.allowZoom();
-
       // The default click handler follows. Disable it by setting
       // the zoomOnClick property to false.
       if (mc.getZoomOnClick() && allowZoom) {
         // Zoom into the cluster.
         mz = mc.getMaxZoom();
         theBounds = cClusterIcon.cluster_.getBounds();
+		var oldZoom = mc.getMap().getZoom();
+		//console.log('old zoom=' + oldZoom + ', bounds=' + theBounds);
         mc.getMap().fitBounds(theBounds);
+		//console.log('new zoom=' + mc.getMap().getZoom());
+		var zoomUnchanged = (mc.getMap().getZoom() == oldZoom);
+		//console.log('zoomUnchanged=' + zoomUnchanged);
+
         // There is a fix for Issue 170 here:
         setTimeout(function () {
           mc.getMap().fitBounds(theBounds);
+		  //console.log('fix zoom=' + mc.getMap().getZoom());
           // Don't zoom beyond the max zoom level
           if (mz !== null && (mc.getMap().getZoom() > mz)) {
             mc.getMap().setZoom(mz + 1);
           }
+		  else{
+			  if (zoomUnchanged) {
+				  if (mz !== null)
+				  {
+					  if (mc.getMap().getZoom() < mz)
+					  {
+						  //var newZoom = mc.getMap().getZoom() + 1;
+						  mc.getMap().setZoom(mc.getMap().getZoom() + 1);
+						  //console.log('maxZoom=' + mz + ', newZoom=' + newZoom);
+					  }
+					  // still need fix here for Google Maps Utility V3 library issue 252
+					  // if the maxZoom stops the clustering to happen at this zoom level
+					  // i.e. should display the single markers, but the map is clear
+				  }
+				  else{
+					  //var newZoom = mc.getMap().getZoom() + 1;
+					  mc.getMap().setZoom(mc.getMap().getZoom() + 1);
+					  //console.log('No maxZoom, newZoom=' + newZoom);
+				  }
+			  }
+		  }
         }, 100);
       }
 

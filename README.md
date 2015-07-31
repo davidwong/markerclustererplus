@@ -14,6 +14,10 @@ Changes from the imported version 2.1.2.
 
 * divClassName option: when set will add a class name for the div that holds the cluster icon. Currently this is only used as a tag for e2e testing, e.g. to allow selenium to find the clusters in a map.
 
+### v0.2
+
+* workaround for cluster not zooming when clicked, after fitBounds() is called.
+
 ## Build
 
 To build a minified version of the library using uglify:
